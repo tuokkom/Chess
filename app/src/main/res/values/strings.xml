@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">chess</string>
+    <string name="new_game">New game</string>
 </resources>
