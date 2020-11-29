@@ -8,6 +8,7 @@ class BoardRectangle: View {
     var isWhite: Boolean = false
     var rowNumber: Int = 0
     var columnNumber: Int = 0
+    var chessPiece: ChessPiece? = null
 
     constructor(context: Context): super(context) {
         init()

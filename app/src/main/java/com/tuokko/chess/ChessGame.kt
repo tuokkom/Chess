@@ -69,40 +69,40 @@ class ChessGame: AppCompatActivity() {
 
         // Add black pawns
         val layerDrawable: LayerDrawable
+        var chessPiece: ChessPiece? = null
         when (row) {
-            1 -> layerDrawable = getPiece(false, column, background)
+            1 -> {
+                chessPiece = ChessPiece(row, column)
+                layerDrawable = getPiece(false, column, background)
+            }
             2 -> {
+                chessPiece = ChessPiece(row, column)
                 val icon = resources.getDrawable(R.drawable.ic_black_pawn)
                 val layers = arrayOf<Drawable>(background, icon)
                 layerDrawable = LayerDrawable(layers)
             }
             7 -> {
+                chessPiece = ChessPiece(row, column)
                 val icon = resources.getDrawable(R.drawable.ic_white_pawn)
                 val layers = arrayOf<Drawable>(background, icon)
                 layerDrawable = LayerDrawable(layers)
             }
             8 -> layerDrawable = getPiece(true, column, background)
             else -> {
+                chessPiece = ChessPiece(row, column)
                 val layers = arrayOf<Drawable>(background)
                 layerDrawable = LayerDrawable(layers)
             }
         }
         boardRect.background = layerDrawable
+        boardRect.chessPiece = chessPiece
 
         boardRect.setOnClickListener {view ->
             if (view is BoardRectangle) {
                 Log.d(CLASS_NAME, "onClickListener()", "White clicked: ${view.isWhite}")
                 Log.d(CLASS_NAME, "onClickListener()", "Column: ${view.columnNumber}")
                 Log.d(CLASS_NAME, "onClickListener()", "Row: ${view.rowNumber}")
-
-                /*
-                val background = view.background
-                val icon  = resources.getDrawable(R.drawable.ic_white_king)
-                val layers = arrayOf<Drawable>(background, icon)
-                val layerDrawable = LayerDrawable(layers)
-                view.background = layerDrawable
-
-                 */
+                handleBoardClick(view)
             }
         }
         return boardRect
@@ -166,5 +166,9 @@ class ChessGame: AppCompatActivity() {
         } else {
             resources.getDrawable(R.drawable.ic_black_king)
         }
+    }
+
+    private fun handleBoardClick(boardPart: BoardRectangle) {
+
     }
 }
