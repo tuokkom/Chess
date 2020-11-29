@@ -1,6 +1,9 @@
 package com.tuokko.chess
 
 import android.app.ActionBar
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.ShapeDrawable
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log.d
@@ -60,12 +63,32 @@ class ChessGame: AppCompatActivity() {
         boardRect.columnNumber = column
         boardRect.rowNumber = row
 
+        val background: Drawable
         if (white) {
             boardRect.isWhite = true
-            boardRect.background = resources.getDrawable(R.drawable.board_background_white)
+            background = resources.getDrawable(R.drawable.board_background_white)
         } else {
             boardRect.isWhite = false
-            boardRect.background = resources.getDrawable(R.drawable.board_background_brown)
+            background = resources.getDrawable(R.drawable.board_background_brown)
+        }
+
+        // Add black pawns
+        when (row) {
+            2 -> {
+                val icon = resources.getDrawable(R.drawable.ic_black_pawn)
+                val layers = arrayOf<Drawable>(background, icon)
+                val layerDrawable = LayerDrawable(layers)
+                boardRect.background = layerDrawable
+            }
+            7 -> {
+                val icon = resources.getDrawable(R.drawable.ic_white_pawn)
+                val layers = arrayOf<Drawable>(background, icon)
+                val layerDrawable = LayerDrawable(layers)
+                boardRect.background = layerDrawable
+            }
+            else -> {
+                boardRect.background = background
+            }
         }
 
         boardRect.setOnClickListener {view ->
@@ -73,6 +96,15 @@ class ChessGame: AppCompatActivity() {
                 Log.d(CLASS_NAME, "onClickListener()", "White clicked: ${view.isWhite}")
                 Log.d(CLASS_NAME, "onClickListener()", "Column: ${view.columnNumber}")
                 Log.d(CLASS_NAME, "onClickListener()", "Row: ${view.rowNumber}")
+
+                /*
+                val background = view.background
+                val icon  = resources.getDrawable(R.drawable.ic_white_king)
+                val layers = arrayOf<Drawable>(background, icon)
+                val layerDrawable = LayerDrawable(layers)
+                view.background = layerDrawable
+
+                 */
             }
         }
         return boardRect
