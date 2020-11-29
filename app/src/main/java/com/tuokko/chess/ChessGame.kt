@@ -3,15 +3,10 @@ package com.tuokko.chess
 import android.app.ActionBar
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
-import android.graphics.drawable.ShapeDrawable
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log.d
-import android.view.View
 import android.widget.GridLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.tuokko.chess.Log
 
 class ChessGame: AppCompatActivity() {
     private val CLASS_NAME = "ChessGame"
@@ -73,23 +68,26 @@ class ChessGame: AppCompatActivity() {
         }
 
         // Add black pawns
+        val layerDrawable: LayerDrawable
         when (row) {
+            1 -> layerDrawable = getPiece(false, column, background)
             2 -> {
                 val icon = resources.getDrawable(R.drawable.ic_black_pawn)
                 val layers = arrayOf<Drawable>(background, icon)
-                val layerDrawable = LayerDrawable(layers)
-                boardRect.background = layerDrawable
+                layerDrawable = LayerDrawable(layers)
             }
             7 -> {
                 val icon = resources.getDrawable(R.drawable.ic_white_pawn)
                 val layers = arrayOf<Drawable>(background, icon)
-                val layerDrawable = LayerDrawable(layers)
-                boardRect.background = layerDrawable
+                layerDrawable = LayerDrawable(layers)
             }
+            8 -> layerDrawable = getPiece(true, column, background)
             else -> {
-                boardRect.background = background
+                val layers = arrayOf<Drawable>(background)
+                layerDrawable = LayerDrawable(layers)
             }
         }
+        boardRect.background = layerDrawable
 
         boardRect.setOnClickListener {view ->
             if (view is BoardRectangle) {
@@ -108,5 +106,65 @@ class ChessGame: AppCompatActivity() {
             }
         }
         return boardRect
+    }
+
+    private fun getPiece(isWhite: Boolean, column: Int, background: Drawable): LayerDrawable {
+        val icon: Drawable
+        when (column) {
+            1 -> icon = getTower(isWhite)
+            2 -> icon = getHorse(isWhite)
+            3 -> icon = getBishop(isWhite)
+            4 -> icon = getQueen(isWhite)
+            5 -> icon = getKing(isWhite)
+            6 -> icon = getBishop(isWhite)
+            7 -> icon = getHorse(isWhite)
+            8 -> icon = getTower(isWhite)
+            else -> {
+                Log.d(CLASS_NAME, "getPiece()", "Invalid column number")
+                icon = background
+            }
+        }
+        val layers = arrayOf<Drawable>(background, icon)
+        return LayerDrawable(layers)
+    }
+
+    private fun getHorse(isWhite: Boolean): Drawable {
+        return if (isWhite) {
+            resources.getDrawable(R.drawable.ic_white_horse)
+        } else {
+            resources.getDrawable(R.drawable.ic_black_horse)
+        }
+    }
+
+    private fun getTower(isWhite: Boolean): Drawable {
+        return if (isWhite) {
+            resources.getDrawable(R.drawable.ic_white_tower)
+        } else {
+            resources.getDrawable(R.drawable.ic_black_tower)
+        }
+    }
+
+    private fun getBishop(isWhite: Boolean): Drawable {
+        return if (isWhite) {
+            resources.getDrawable(R.drawable.ic_white_bishop)
+        } else {
+            resources.getDrawable(R.drawable.ic_black_bishop)
+        }
+    }
+
+    private fun getQueen(isWhite: Boolean): Drawable {
+        return if (isWhite) {
+            resources.getDrawable(R.drawable.ic_white_queen)
+        } else {
+            resources.getDrawable(R.drawable.ic_black_queen)
+        }
+    }
+
+    private fun getKing(isWhite: Boolean): Drawable {
+        return if (isWhite) {
+            resources.getDrawable(R.drawable.ic_white_king)
+        } else {
+            resources.getDrawable(R.drawable.ic_black_king)
+        }
     }
 }
