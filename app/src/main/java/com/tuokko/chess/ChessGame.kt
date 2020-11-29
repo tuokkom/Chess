@@ -30,18 +30,18 @@ class ChessGame: AppCompatActivity() {
 
         for (i in 1..8) {
             for (j in 1..8) {
-                var rect: TextView
+                var rect: BoardRectangle
                 if (i % 2 == 0) {
                     if (j % 2 == 0) {
-                        rect = createBoardRectangle(true, boardRectWidth)
+                        rect = createBoardRectangle(true, boardRectWidth, j, i)
                     } else {
-                        rect = createBoardRectangle(false, boardRectWidth)
+                        rect = createBoardRectangle(false, boardRectWidth, j, i)
                     }
                 } else {
                     if (j % 2 != 0) {
-                        rect = createBoardRectangle(true, boardRectWidth)
+                        rect = createBoardRectangle(true, boardRectWidth, j, i)
                     } else {
-                        rect = createBoardRectangle(false, boardRectWidth)
+                        rect = createBoardRectangle(false, boardRectWidth, j, i)
                     }
                 }
                 Log.d(CLASS_NAME, "setupBoard()", "New board rectangle width: ${displayMetrics.widthPixels}")
@@ -51,18 +51,30 @@ class ChessGame: AppCompatActivity() {
         }
     }
 
-    private fun createBoardRectangle(white: Boolean, width: Int): TextView {
+    private fun createBoardRectangle(white: Boolean, width: Int, column: Int, row: Int): BoardRectangle {
         Log.d(CLASS_NAME, "createBoardRectangle()", "New board rectangle")
 
-        val boardRect = TextView(this)
-
+        val boardRect = BoardRectangle(this)
         val layoutParams = ActionBar.LayoutParams(width, width)
+        boardRect.layoutParams = layoutParams
+        boardRect.columnNumber = column
+        boardRect.rowNumber = row
+
         if (white) {
+            boardRect.isWhite = true
             boardRect.background = resources.getDrawable(R.drawable.board_background_white)
         } else {
+            boardRect.isWhite = false
             boardRect.background = resources.getDrawable(R.drawable.board_background_brown)
         }
-        boardRect.layoutParams = layoutParams
+
+        boardRect.setOnClickListener {view ->
+            if (view is BoardRectangle) {
+                Log.d(CLASS_NAME, "onClickListener()", "White clicked: ${view.isWhite}")
+                Log.d(CLASS_NAME, "onClickListener()", "Column: ${view.columnNumber}")
+                Log.d(CLASS_NAME, "onClickListener()", "Row: ${view.rowNumber}")
+            }
+        }
         return boardRect
     }
 }
