@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 
 class ChessPiece(xInitial: Int, yInitial: Int, ctx: Context) {
+    private val CLASS_NAME = "ChessPiece"
 
     enum class PieceValue {
         PAWN, TOWER, HORSE, BISHOP, KING, QUEEN
@@ -110,8 +111,47 @@ class ChessPiece(xInitial: Int, yInitial: Int, ctx: Context) {
         }
     }
 
-    fun legalToMove(boardPiece: BoardRectangle): Boolean {
+    fun legalToMove(boardRect: BoardRectangle): Boolean {
+        Log.d(CLASS_NAME, "legalToMove()", "Validating movement to a piece")
+        when (value) {
+            PieceValue.PAWN -> return pawnLegalToMove(boardRect)
+        }
         return true
     }
 
+    private fun pawnLegalToMove(boardRect: BoardRectangle): Boolean {
+        Log.d(CLASS_NAME, "pawnLegalToMove()", "Board column: ${boardRect.columnNumber} piece xlocation: $xLocation" )
+        if (xLocation != boardRect.columnNumber) {
+            return false
+        }
+        Log.d(CLASS_NAME, "pawnLegalToMove()", "Board row: ${boardRect.rowNumber} piece ylocation: $yLocation" )
+        if (color == ChessGame.PlayerColor.WHITE) {
+            if (yLocation == 7) {
+                if (boardRect.rowNumber == yLocation!! - 2) {
+                    return true
+                }
+            }
+            if (boardRect.rowNumber == yLocation!! - 1) {
+                return true
+            }
+        }
+        if (color == ChessGame.PlayerColor.BLACK) {
+            if (yLocation == 2) {
+                if (boardRect.rowNumber == yLocation!! + 2) {
+                    return true
+                }
+            }
+            if (boardRect.rowNumber == yLocation!! + 1) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    fun moveTo(boardRect: BoardRectangle) {
+        xLocation = boardRect.columnNumber
+        yLocation = boardRect.rowNumber
+        Log.d(CLASS_NAME, "moveTo()", "Moved piece to x: $xLocation y: $yLocation")
+    }
 }

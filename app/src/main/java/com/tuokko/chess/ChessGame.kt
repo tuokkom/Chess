@@ -184,7 +184,7 @@ class ChessGame: AppCompatActivity() {
     }
 
     private fun handleBoardClick(boardPart: BoardRectangle) {
-        Log.d(CLASS_NAME, "handleBoardClick()", "Board clicked")
+        Log.d(CLASS_NAME, "handleBoardClick()", "------------Board clicked------------")
         if (gameState == GameState.CHOOSE_PAWN) {
             Log.d(CLASS_NAME, "handleBoardClick()", "Choosing a piece to move")
             if (boardPart.chessPiece == null) {
@@ -198,7 +198,9 @@ class ChessGame: AppCompatActivity() {
             }
 
         } else if (gameState == GameState.MOVE_PAWN) {
+            Log.d(CLASS_NAME, "handleBoardClick()", "Moving a piece")
             if (boardPart == currentlyChosenBoardPart) {
+                Log.d(CLASS_NAME, "handleBoardClick()", "Cancel moving a piece")
                 boardPart.removeGray()
                 gameState = GameState.CHOOSE_PAWN
             } else {

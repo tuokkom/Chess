@@ -50,10 +50,13 @@ class BoardRectangle: View {
     }
 
     fun moveTo(moveToPart: BoardRectangle): Boolean {
+        Log.d(CLASS_NAME, "moveTo()", "Validating movement")
         if (chessPiece == null) {
+            Log.d(CLASS_NAME, "moveTo()", "There is no piece in the rect chosen to move")
             return false
         }
         if (chessPiece!!.legalToMove(moveToPart)) {
+            chessPiece!!.moveTo(moveToPart)
             moveToPart.addChessPiece(chessPiece)
             chessPiece = null
             drawBoardRectangle()
