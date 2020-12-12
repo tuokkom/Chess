@@ -110,4 +110,8 @@ class ChessPiece(xInitial: Int, yInitial: Int, ctx: Context) {
         }
     }
 
+    fun legalToMove(boardPiece: BoardRectangle): Boolean {
+        return true
+    }
+
 }

@@ -197,6 +197,16 @@ class ChessGame: AppCompatActivity() {
                 choosePieceToMove(boardPart)
             }
 
+        } else if (gameState == GameState.MOVE_PAWN) {
+            if (boardPart == currentlyChosenBoardPart) {
+                boardPart.removeGray()
+                gameState = GameState.CHOOSE_PAWN
+            } else {
+                if (currentlyChosenBoardPart!!.moveTo(boardPart)) {
+                    nextTurn()
+                }
+
+            }
         }
         Log.d(CLASS_NAME, "handleBoardClick()", "--------------------------------")
 
@@ -205,5 +215,15 @@ class ChessGame: AppCompatActivity() {
     private fun choosePieceToMove(boardPart: BoardRectangle) {
         boardPart.makeGray()
         currentlyChosenBoardPart = boardPart
+        gameState = GameState.MOVE_PAWN
+    }
+
+    private fun nextTurn() {
+        playerColor = if (playerColor == PlayerColor.WHITE) {
+            PlayerColor.BLACK
+        } else {
+            PlayerColor.WHITE
+        }
+        gameState = GameState.CHOOSE_PAWN
     }
 }

@@ -44,4 +44,42 @@ class BoardRectangle: View {
             background = layerDrawable
         }
     }
+
+    fun removeGray() {
+        drawBoardRectangle()
+    }
+
+    fun moveTo(moveToPart: BoardRectangle): Boolean {
+        if (chessPiece == null) {
+            return false
+        }
+        if (chessPiece!!.legalToMove(moveToPart)) {
+            moveToPart.addChessPiece(chessPiece)
+            chessPiece = null
+            drawBoardRectangle()
+            return true
+        }
+        return false
+    }
+
+    fun addChessPiece(piece: ChessPiece?) {
+        chessPiece = piece
+        drawBoardRectangle()
+    }
+
+    fun drawBoardRectangle() {
+        if (boardBackground == null) {
+            return
+        }
+        val icon: Drawable? = chessPiece?.icon
+
+        val layers = if (icon != null) {
+            arrayOf(boardBackground!!, icon)
+        } else {
+            arrayOf(boardBackground!!)
+        }
+
+        val layerDrawable = LayerDrawable(layers)
+        background = layerDrawable
+    }
 }
