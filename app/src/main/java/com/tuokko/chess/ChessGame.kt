@@ -13,6 +13,18 @@ class ChessGame: AppCompatActivity() {
 
     private lateinit var boardLayout: GridLayout
 
+    private enum class GameState {
+        STOPPED, CHOOSE_PAWN, MOVE_PAWN
+    }
+
+    enum class PlayerColor {
+        WHITE, BLACK
+    }
+
+    private var gameState: GameState = GameState.CHOOSE_PAWN
+    private var playerColor: PlayerColor = PlayerColor.WHITE
+    private var currentlyChosenBoardPart: BoardRectangle? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -61,10 +73,10 @@ class ChessGame: AppCompatActivity() {
         val background: Drawable
         if (white) {
             boardRect.isWhite = true
-            background = resources.getDrawable(R.drawable.board_background_white)
+            background = this.getDrawable(R.drawable.board_background_white)!!
         } else {
             boardRect.isWhite = false
-            background = resources.getDrawable(R.drawable.board_background_brown)
+            background = this.getDrawable(R.drawable.board_background_brown)!!
         }
 
         // Add black pawns
@@ -72,34 +84,37 @@ class ChessGame: AppCompatActivity() {
         var chessPiece: ChessPiece? = null
         when (row) {
             1 -> {
-                chessPiece = ChessPiece(row, column)
+                chessPiece = ChessPiece(column, row, this)
                 layerDrawable = getPiece(false, column, background)
             }
             2 -> {
-                chessPiece = ChessPiece(row, column)
-                val icon = resources.getDrawable(R.drawable.ic_black_pawn)
-                val layers = arrayOf<Drawable>(background, icon)
+                chessPiece = ChessPiece(column, row, this)
+                val icon = this.getDrawable(R.drawable.ic_black_pawn)!!
+                val layers = arrayOf(background, icon)
                 layerDrawable = LayerDrawable(layers)
             }
             7 -> {
-                chessPiece = ChessPiece(row, column)
-                val icon = resources.getDrawable(R.drawable.ic_white_pawn)
-                val layers = arrayOf<Drawable>(background, icon)
+                chessPiece = ChessPiece(column, row, this)
+                val icon = this.getDrawable(R.drawable.ic_white_pawn)!!
+                val layers = arrayOf(background, icon)
                 layerDrawable = LayerDrawable(layers)
             }
-            8 -> layerDrawable = getPiece(true, column, background)
+            8 -> {
+                chessPiece = ChessPiece(column, row, this)
+                layerDrawable = getPiece(true, column, background)
+            }
             else -> {
-                chessPiece = ChessPiece(row, column)
-                val layers = arrayOf<Drawable>(background)
+                val layers = arrayOf(background)
                 layerDrawable = LayerDrawable(layers)
             }
         }
         boardRect.background = layerDrawable
         boardRect.chessPiece = chessPiece
+        boardRect.boardBackground = background
 
         boardRect.setOnClickListener {view ->
             if (view is BoardRectangle) {
-                Log.d(CLASS_NAME, "onClickListener()", "White clicked: ${view.isWhite}")
+                //Log.d(CLASS_NAME, "onClickListener()", "White clicked: ${view.isWhite}")
                 Log.d(CLASS_NAME, "onClickListener()", "Column: ${view.columnNumber}")
                 Log.d(CLASS_NAME, "onClickListener()", "Row: ${view.rowNumber}")
                 handleBoardClick(view)
@@ -130,45 +145,65 @@ class ChessGame: AppCompatActivity() {
 
     private fun getHorse(isWhite: Boolean): Drawable {
         return if (isWhite) {
-            resources.getDrawable(R.drawable.ic_white_horse)
+            this.getDrawable(R.drawable.ic_white_horse)!!
         } else {
-            resources.getDrawable(R.drawable.ic_black_horse)
+            this.getDrawable(R.drawable.ic_black_horse)!!
         }
     }
 
     private fun getTower(isWhite: Boolean): Drawable {
         return if (isWhite) {
-            resources.getDrawable(R.drawable.ic_white_tower)
+            this.getDrawable(R.drawable.ic_white_tower)!!
         } else {
-            resources.getDrawable(R.drawable.ic_black_tower)
+            this.getDrawable(R.drawable.ic_black_tower)!!
         }
     }
 
     private fun getBishop(isWhite: Boolean): Drawable {
         return if (isWhite) {
-            resources.getDrawable(R.drawable.ic_white_bishop)
+            this.getDrawable(R.drawable.ic_white_bishop)!!
         } else {
-            resources.getDrawable(R.drawable.ic_black_bishop)
+            this.getDrawable(R.drawable.ic_black_bishop)!!
         }
     }
 
     private fun getQueen(isWhite: Boolean): Drawable {
         return if (isWhite) {
-            resources.getDrawable(R.drawable.ic_white_queen)
+            this.getDrawable(R.drawable.ic_white_queen)!!
         } else {
-            resources.getDrawable(R.drawable.ic_black_queen)
+            this.getDrawable(R.drawable.ic_black_queen)!!
         }
     }
 
     private fun getKing(isWhite: Boolean): Drawable {
         return if (isWhite) {
-            resources.getDrawable(R.drawable.ic_white_king)
+            this.getDrawable(R.drawable.ic_white_king)!!
         } else {
-            resources.getDrawable(R.drawable.ic_black_king)
+            this.getDrawable(R.drawable.ic_black_king)!!
         }
     }
 
     private fun handleBoardClick(boardPart: BoardRectangle) {
+        Log.d(CLASS_NAME, "handleBoardClick()", "Board clicked")
+        if (gameState == GameState.CHOOSE_PAWN) {
+            Log.d(CLASS_NAME, "handleBoardClick()", "Choosing a piece to move")
+            if (boardPart.chessPiece == null) {
+                return
+            }
 
+            Log.d(CLASS_NAME, "handleBoardClick()", "A piece clicked")
+            if (boardPart.chessPiece!!.color == playerColor) {
+                Log.d(CLASS_NAME, "handleBoardClick()", "Valid piece clicked")
+                choosePieceToMove(boardPart)
+            }
+
+        }
+        Log.d(CLASS_NAME, "handleBoardClick()", "--------------------------------")
+
+    }
+
+    private fun choosePieceToMove(boardPart: BoardRectangle) {
+        boardPart.makeGray()
+        currentlyChosenBoardPart = boardPart
     }
 }

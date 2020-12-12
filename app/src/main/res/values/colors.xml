@@ -10,4 +10,6 @@
     <color name="light_blue">#5ABAF8</color>
     <color name="light_brown">#cd853f</color>
 
+    <color name="transparent">#50000000</color>
+
 </resources>
