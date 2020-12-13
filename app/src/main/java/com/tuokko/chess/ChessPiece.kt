@@ -192,44 +192,14 @@ class ChessPiece(xInitial: Int, yInitial: Int, ctx: Context) {
         }
         // Vertical movement
         if (boardRect.x == xLocation) {
-            Log.d(CLASS_NAME, "towerLegalToMove()", "Vertical movement of tower, board y: ${boardRect.y} piece y: $yLocation")
-            var yCoordinate = minOf(boardRect.y, yLocation!!) + 1
-            val yMax = maxOf(boardRect.y, yLocation!!)
-            while (yCoordinate < yMax) {
-                if (getRectFromBoard(board, boardRect.x, yCoordinate).chessPiece != null) {
-                    Log.d(CLASS_NAME, "towerLegalToMove()", "There is a piece in middle of the movement")
-                    Log.d(CLASS_NAME, "towerLegalToMove()", "yCoordinate: $yCoordinate yMax $yMax")
-                    Log.d(CLASS_NAME, "towerLegalToMove()", "xCoordinate: ${boardRect.x} yCoordinate $yCoordinate")
-                    Log.d(CLASS_NAME, "towerLegalToMove()", "Piece in the way value: ${getRectFromBoard(board, boardRect.x, yCoordinate).chessPiece?.value}")
-                    return false
-                }
-                yCoordinate += 1
-            }
-            if (boardRect.chessPiece == null) {
+            if (validateVerticalMovement(boardRect, board)) {
                 return true
             }
-            if (boardRect.chessPiece?.color != color) {
-                return true
-            }
-            Log.d(CLASS_NAME, "towerLegalToMove()", "Trying to move on top of own piece")
         }
 
         // Horizontal movement
         if (boardRect.y == yLocation) {
-            var xCoordinate = minOf(boardRect.x, xLocation!!) + 1
-            val xMax = maxOf(boardRect.x, xLocation!!)
-            while (xCoordinate < xMax) {
-                if (getRectFromBoard(board, xCoordinate, boardRect.y).chessPiece != null) {
-                    return false
-                }
-                xCoordinate += 1
-            }
-            if (boardRect.chessPiece == null) {
-                return true
-            }
-            if (boardRect.chessPiece?.color != color) {
-                return true
-            }
+            return validateHorizontalMovement(boardRect, board)
         }
         return false
     }
@@ -258,25 +228,90 @@ class ChessPiece(xInitial: Int, yInitial: Int, ctx: Context) {
             return false
         }
         if (kotlin.math.abs(xLocation!! - boardRect.x) == kotlin.math.abs(yLocation!! - boardRect.y)) {
-            var xCoordinate = minOf(xLocation!!, boardRect.x) + 1
-            var yCoordinate = minOf(yLocation!!, boardRect.y) + 1
-            val xMax = maxOf(xLocation!!, boardRect.x)
-            Log.d(CLASS_NAME, "bishopLegalToMove()", "Checking if jumping over piece")
-            while (xCoordinate < xMax) {
-                Log.d(CLASS_NAME, "bishopLegalToMove()", "xCoordinate: $xCoordinate yCoordinate $yCoordinate")
-                if (getRectFromBoard(board, xCoordinate, yCoordinate).chessPiece != null) {
-                    Log.d(CLASS_NAME, "bishopLegalToMove()", "Jumping over ${getRectFromBoard(board, xCoordinate, yCoordinate).chessPiece?.value}")
-                    return false
-                }
-                xCoordinate += 1
-                yCoordinate += 1
+            return validateDiagonalMovement(boardRect, board)
+        }
+        return false
+    }
+
+    private fun validateDiagonalMovement(boardRect: BoardRectangle, board: GridLayout): Boolean {
+        if (xLocation == null || yLocation == null) {
+            return false
+        }
+        var xCoordinate: Int
+        var yCoordinate: Int
+        var addToY: Int
+        if (xLocation!! < boardRect.x) {
+            xCoordinate = xLocation!! + 1
+            if (yLocation!! < boardRect.y) {
+                yCoordinate = yLocation!! + 1
+                addToY = 1
+            } else {
+                yCoordinate = yLocation!! - 1
+                addToY = -1
             }
-            if (boardRect.chessPiece == null) {
-                return true
+        } else {
+            xCoordinate = boardRect.x + 1
+            if (boardRect.y < yLocation!!) {
+                yCoordinate = boardRect.y + 1
+                addToY = 1
+            } else {
+                yCoordinate = boardRect.y - 1
+                addToY = -1
             }
-            if (boardRect.chessPiece?.color != color) {
-                return true
+        }
+
+        val xMax = maxOf(xLocation!!, boardRect.x)
+        Log.d(CLASS_NAME, "validateDiagonalMovement()", "Checking if jumping over piece")
+        while (xCoordinate < xMax) {
+            Log.d(CLASS_NAME, "validateDiagonalMovement()", "xCoordinate: $xCoordinate yCoordinate $yCoordinate")
+            if (getRectFromBoard(board, xCoordinate, yCoordinate).chessPiece != null) {
+                Log.d(CLASS_NAME, "validateDiagonalMovement()", "Jumping over ${getRectFromBoard(board, xCoordinate, yCoordinate).chessPiece?.value}")
+                return false
             }
+            xCoordinate += 1
+            yCoordinate += addToY
+        }
+        if (boardRect.chessPiece == null) {
+            return true
+        }
+        if (boardRect.chessPiece?.color != color) {
+            return true
+        }
+        return false
+    }
+
+    private fun validateHorizontalMovement(boardRect: BoardRectangle, board: GridLayout): Boolean {
+        var xCoordinate = minOf(boardRect.x, xLocation!!) + 1
+        val xMax = maxOf(boardRect.x, xLocation!!)
+        while (xCoordinate < xMax) {
+            if (getRectFromBoard(board, xCoordinate, boardRect.y).chessPiece != null) {
+                return false
+            }
+            xCoordinate += 1
+        }
+        if (boardRect.chessPiece == null) {
+            return true
+        }
+        if (boardRect.chessPiece?.color != color) {
+            return true
+        }
+        return false
+    }
+
+    private fun validateVerticalMovement(boardRect: BoardRectangle, board: GridLayout): Boolean {
+        var yCoordinate = minOf(boardRect.y, yLocation!!) + 1
+        val yMax = maxOf(boardRect.y, yLocation!!)
+        while (yCoordinate < yMax) {
+            if (getRectFromBoard(board, boardRect.x, yCoordinate).chessPiece != null) {
+                return false
+            }
+            yCoordinate += 1
+        }
+        if (boardRect.chessPiece == null) {
+            return true
+        }
+        if (boardRect.chessPiece?.color != color) {
+            return true
         }
         return false
     }
