@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.widget.GridLayout
 import androidx.core.view.get
+import java.lang.Math.abs
 
 class ChessPiece(xInitial: Int, yInitial: Int, ctx: Context) {
     private val CLASS_NAME = "ChessPiece"
@@ -119,6 +120,7 @@ class ChessPiece(xInitial: Int, yInitial: Int, ctx: Context) {
             PieceValue.PAWN -> return pawnLegalToMove(boardRect, board)
             PieceValue.TOWER -> return towerLegalToMove(boardRect, board)
             PieceValue.HORSE -> return horseLegalToMove(boardRect)
+            PieceValue.BISHOP -> return bishopLegalToMove(boardRect, board)
         }
         return true
     }
@@ -246,6 +248,34 @@ class ChessPiece(xInitial: Int, yInitial: Int, ctx: Context) {
                 if (boardRect.chessPiece?.color != color) {
                     return true
                 }
+            }
+        }
+        return false
+    }
+
+    private fun bishopLegalToMove(boardRect: BoardRectangle, board: GridLayout): Boolean {
+        if (xLocation == null || yLocation == null) {
+            return false
+        }
+        if (kotlin.math.abs(xLocation!! - boardRect.x) == kotlin.math.abs(yLocation!! - boardRect.y)) {
+            var xCoordinate = minOf(xLocation!!, boardRect.x) + 1
+            var yCoordinate = minOf(yLocation!!, boardRect.y) + 1
+            val xMax = maxOf(xLocation!!, boardRect.x)
+            Log.d(CLASS_NAME, "bishopLegalToMove()", "Checking if jumping over piece")
+            while (xCoordinate < xMax) {
+                Log.d(CLASS_NAME, "bishopLegalToMove()", "xCoordinate: $xCoordinate yCoordinate $yCoordinate")
+                if (getRectFromBoard(board, xCoordinate, yCoordinate).chessPiece != null) {
+                    Log.d(CLASS_NAME, "bishopLegalToMove()", "Jumping over ${getRectFromBoard(board, xCoordinate, yCoordinate).chessPiece?.value}")
+                    return false
+                }
+                xCoordinate += 1
+                yCoordinate += 1
+            }
+            if (boardRect.chessPiece == null) {
+                return true
+            }
+            if (boardRect.chessPiece?.color != color) {
+                return true
             }
         }
         return false
