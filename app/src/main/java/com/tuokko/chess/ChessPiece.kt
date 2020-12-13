@@ -147,21 +147,21 @@ class ChessPiece(xInitial: Int, yInitial: Int, ctx: Context) {
         Log.d(CLASS_NAME, "pawnLegalToMove()", "Board row: ${boardRect.y} piece ylocation: $yLocation" )
         if (color == ChessGame.PlayerColor.WHITE) {
             if (yLocation == 7) {
-                if (boardRect.y == yLocation!! - 2) {
+                if (boardRect.y == yLocation!! - 2 && boardRect.chessPiece == null) {
                     return true
                 }
             }
-            if (boardRect.y == yLocation!! - 1) {
+            if (boardRect.y == yLocation!! - 1 && boardRect.chessPiece == null) {
                 return true
             }
         }
         if (color == ChessGame.PlayerColor.BLACK) {
             if (yLocation == 2) {
-                if (boardRect.y == yLocation!! + 2) {
+                if (boardRect.y == yLocation!! + 2 && boardRect.chessPiece == null) {
                     return true
                 }
             }
-            if (boardRect.y == yLocation!! + 1) {
+            if (boardRect.y == yLocation!! + 1 && boardRect.chessPiece == null) {
                 return true
             }
         }
