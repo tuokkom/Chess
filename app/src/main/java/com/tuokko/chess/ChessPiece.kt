@@ -2,6 +2,8 @@ package com.tuokko.chess
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.widget.GridLayout
+import androidx.core.view.get
 
 class ChessPiece(xInitial: Int, yInitial: Int, ctx: Context) {
     private val CLASS_NAME = "ChessPiece"
@@ -111,37 +113,55 @@ class ChessPiece(xInitial: Int, yInitial: Int, ctx: Context) {
         }
     }
 
-    fun legalToMove(boardRect: BoardRectangle): Boolean {
+    fun legalToMove(boardRect: BoardRectangle, board: GridLayout): Boolean {
         Log.d(CLASS_NAME, "legalToMove()", "Validating movement to a piece")
         when (value) {
-            PieceValue.PAWN -> return pawnLegalToMove(boardRect)
+            PieceValue.PAWN -> return pawnLegalToMove(boardRect, board)
         }
         return true
     }
 
-    private fun pawnLegalToMove(boardRect: BoardRectangle): Boolean {
-        Log.d(CLASS_NAME, "pawnLegalToMove()", "Board column: ${boardRect.columnNumber} piece xlocation: $xLocation" )
-        if (xLocation != boardRect.columnNumber) {
+    private fun pawnLegalToMove(boardRect: BoardRectangle, board: GridLayout): Boolean {
+        Log.d(CLASS_NAME, "pawnLegalToMove()", "Board x: ${boardRect.x} piece xlocation: $xLocation" )
+        if (xLocation == boardRect.x - 1 || xLocation == boardRect.x + 1 ) {
+            if (color == ChessGame.PlayerColor.WHITE) {
+                //Log.d(CLASS_NAME, "pawnLegalToMove()", "Board y: ${boardRect.y} piece ylocation: $yLocation" )
+                if (boardRect.y + 1 == yLocation) {
+                    if (boardRect.chessPiece?.color == ChessGame.PlayerColor.BLACK) {
+                        return true
+                    }
+                    //Log.d(CLASS_NAME, "pawnLegalToMove()", "Board orientation: ${board.orientation}")
+                }
+            }
+            if (color == ChessGame.PlayerColor.BLACK) {
+                if (boardRect.y - 1 == yLocation) {
+                    if (boardRect.chessPiece?.color == ChessGame.PlayerColor.WHITE) {
+                        return true
+                    }
+                }
+            }
+        }
+        if (xLocation != boardRect.x) {
             return false
         }
-        Log.d(CLASS_NAME, "pawnLegalToMove()", "Board row: ${boardRect.rowNumber} piece ylocation: $yLocation" )
+        Log.d(CLASS_NAME, "pawnLegalToMove()", "Board row: ${boardRect.y} piece ylocation: $yLocation" )
         if (color == ChessGame.PlayerColor.WHITE) {
             if (yLocation == 7) {
-                if (boardRect.rowNumber == yLocation!! - 2) {
+                if (boardRect.y == yLocation!! - 2) {
                     return true
                 }
             }
-            if (boardRect.rowNumber == yLocation!! - 1) {
+            if (boardRect.y == yLocation!! - 1) {
                 return true
             }
         }
         if (color == ChessGame.PlayerColor.BLACK) {
             if (yLocation == 2) {
-                if (boardRect.rowNumber == yLocation!! + 2) {
+                if (boardRect.y == yLocation!! + 2) {
                     return true
                 }
             }
-            if (boardRect.rowNumber == yLocation!! + 1) {
+            if (boardRect.y == yLocation!! + 1) {
                 return true
             }
         }
@@ -150,8 +170,13 @@ class ChessPiece(xInitial: Int, yInitial: Int, ctx: Context) {
     }
 
     fun moveTo(boardRect: BoardRectangle) {
-        xLocation = boardRect.columnNumber
-        yLocation = boardRect.rowNumber
+        xLocation = boardRect.x
+        yLocation = boardRect.y
         Log.d(CLASS_NAME, "moveTo()", "Moved piece to x: $xLocation y: $yLocation")
+    }
+
+    private fun getRectFromBoard(board: GridLayout, x: Int, y: Int): BoardRectangle {
+        val index = (x-1) * 8 + (y-1)
+        return board[index] as BoardRectangle
     }
 }

@@ -5,13 +5,14 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.util.AttributeSet
 import android.view.View
+import android.widget.GridLayout
 
 class BoardRectangle: View {
     private val CLASS_NAME = "BoardRectangle"
 
     var isWhite: Boolean = false
-    var rowNumber: Int = 0
-    var columnNumber: Int = 0
+    var y: Int = 0
+    var x: Int = 0
     var chessPiece: ChessPiece? = null
     var boardBackground: Drawable? = null
 
@@ -49,13 +50,13 @@ class BoardRectangle: View {
         drawBoardRectangle()
     }
 
-    fun moveTo(moveToPart: BoardRectangle): Boolean {
+    fun moveTo(moveToPart: BoardRectangle, board: GridLayout): Boolean {
         Log.d(CLASS_NAME, "moveTo()", "Validating movement")
         if (chessPiece == null) {
             Log.d(CLASS_NAME, "moveTo()", "There is no piece in the rect chosen to move")
             return false
         }
-        if (chessPiece!!.legalToMove(moveToPart)) {
+        if (chessPiece!!.legalToMove(moveToPart, board)) {
             chessPiece!!.moveTo(moveToPart)
             moveToPart.addChessPiece(chessPiece)
             chessPiece = null

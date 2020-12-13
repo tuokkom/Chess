@@ -67,8 +67,8 @@ class ChessGame: AppCompatActivity() {
         val boardRect = BoardRectangle(this)
         val layoutParams = ActionBar.LayoutParams(width, width)
         boardRect.layoutParams = layoutParams
-        boardRect.columnNumber = column
-        boardRect.rowNumber = row
+        boardRect.x = column
+        boardRect.y = row
 
         val background: Drawable
         if (white) {
@@ -115,8 +115,8 @@ class ChessGame: AppCompatActivity() {
         boardRect.setOnClickListener {view ->
             if (view is BoardRectangle) {
                 //Log.d(CLASS_NAME, "onClickListener()", "White clicked: ${view.isWhite}")
-                Log.d(CLASS_NAME, "onClickListener()", "Column: ${view.columnNumber}")
-                Log.d(CLASS_NAME, "onClickListener()", "Row: ${view.rowNumber}")
+                Log.d(CLASS_NAME, "onClickListener()", "Column: ${view.x}")
+                Log.d(CLASS_NAME, "onClickListener()", "Row: ${view.y}")
                 handleBoardClick(view)
             }
         }
@@ -204,7 +204,7 @@ class ChessGame: AppCompatActivity() {
                 boardPart.removeGray()
                 gameState = GameState.CHOOSE_PAWN
             } else {
-                if (currentlyChosenBoardPart!!.moveTo(boardPart)) {
+                if (currentlyChosenBoardPart!!.moveTo(boardPart, boardLayout)) {
                     nextTurn()
                 }
 
