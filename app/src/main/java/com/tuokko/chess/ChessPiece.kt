@@ -118,6 +118,7 @@ class ChessPiece(xInitial: Int, yInitial: Int, ctx: Context) {
         when (value) {
             PieceValue.PAWN -> return pawnLegalToMove(boardRect, board)
             PieceValue.TOWER -> return towerLegalToMove(boardRect, board)
+            PieceValue.HORSE -> return horseLegalToMove(boardRect)
         }
         return true
     }
@@ -226,6 +227,25 @@ class ChessPiece(xInitial: Int, yInitial: Int, ctx: Context) {
             }
             if (boardRect.chessPiece?.color != color) {
                 return true
+            }
+        }
+        return false
+    }
+
+    private fun horseLegalToMove(boardRect: BoardRectangle): Boolean {
+        if (xLocation == boardRect.x + 1 || xLocation == boardRect.x - 1) {
+            if (yLocation == boardRect.y + 2 || yLocation == boardRect.y - 2) {
+                if (boardRect.chessPiece?.color != color) {
+                    return true
+                }
+            }
+        }
+
+        if (yLocation == boardRect.y + 1 || yLocation == boardRect.y - 1) {
+            if (xLocation == boardRect.x + 2 || xLocation == boardRect.x - 2) {
+                if (boardRect.chessPiece?.color != color) {
+                    return true
+                }
             }
         }
         return false
