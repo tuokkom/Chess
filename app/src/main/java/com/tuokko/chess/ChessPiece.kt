@@ -117,6 +117,7 @@ class ChessPiece(xInitial: Int, yInitial: Int, ctx: Context) {
         Log.d(CLASS_NAME, "legalToMove()", "Validating movement to a piece")
         when (value) {
             PieceValue.PAWN -> return pawnLegalToMove(boardRect, board)
+            PieceValue.TOWER -> return towerLegalToMove(boardRect, board)
         }
         return true
     }
@@ -176,7 +177,57 @@ class ChessPiece(xInitial: Int, yInitial: Int, ctx: Context) {
     }
 
     private fun getRectFromBoard(board: GridLayout, x: Int, y: Int): BoardRectangle {
-        val index = (x-1) * 8 + (y-1)
+        //Log.d(CLASS_NAME, "getRectFromBoard()", "x: $x y: $y")
+        val index = (y-1) * 8 + (x-1)
+        //Log.d(CLASS_NAME, "getRectFromBoard()", "index: $index")
         return board[index] as BoardRectangle
+    }
+
+    private fun towerLegalToMove(boardRect: BoardRectangle, board: GridLayout): Boolean {
+        if (boardRect.x != xLocation && boardRect.y != yLocation) {
+            return false
+        }
+        // Vertical movement
+        if (boardRect.x == xLocation) {
+            Log.d(CLASS_NAME, "towerLegalToMove()", "Vertical movement of tower, board y: ${boardRect.y} piece y: $yLocation")
+            var yCoordinate = minOf(boardRect.y, yLocation!!) + 1
+            val yMax = maxOf(boardRect.y, yLocation!!)
+            while (yCoordinate < yMax) {
+                if (getRectFromBoard(board, boardRect.x, yCoordinate).chessPiece != null) {
+                    Log.d(CLASS_NAME, "towerLegalToMove()", "There is a piece in middle of the movement")
+                    Log.d(CLASS_NAME, "towerLegalToMove()", "yCoordinate: $yCoordinate yMax $yMax")
+                    Log.d(CLASS_NAME, "towerLegalToMove()", "xCoordinate: ${boardRect.x} yCoordinate $yCoordinate")
+                    Log.d(CLASS_NAME, "towerLegalToMove()", "Piece in the way value: ${getRectFromBoard(board, boardRect.x, yCoordinate).chessPiece?.value}")
+                    return false
+                }
+                yCoordinate += 1
+            }
+            if (boardRect.chessPiece == null) {
+                return true
+            }
+            if (boardRect.chessPiece?.color != color) {
+                return true
+            }
+            Log.d(CLASS_NAME, "towerLegalToMove()", "Trying to move on top of own piece")
+        }
+
+        // Horizontal movement
+        if (boardRect.y == yLocation) {
+            var xCoordinate = minOf(boardRect.x, xLocation!!) + 1
+            val xMax = maxOf(boardRect.x, xLocation!!)
+            while (xCoordinate < xMax) {
+                if (getRectFromBoard(board, xCoordinate, boardRect.y).chessPiece != null) {
+                    return false
+                }
+                xCoordinate += 1
+            }
+            if (boardRect.chessPiece == null) {
+                return true
+            }
+            if (boardRect.chessPiece?.color != color) {
+                return true
+            }
+        }
+        return false
     }
 }
